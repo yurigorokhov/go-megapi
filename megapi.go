@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-const Baud = 9600
+const Baud = 115200
 
 // Send motor commands to the MegaPi
 type MegaPi struct {
