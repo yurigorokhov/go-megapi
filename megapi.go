@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
+	"time"
 )
 
 const Baud = 115200
@@ -32,14 +33,16 @@ func NewMegaPi(device string) (*MegaPi, error) {
 	}, nil
 }
 
-func (p *MegaPi) MotorRun(port uint8, speed int16) error {
+// Run a dc motor
+func (p *MegaPi) MotorRun(port byte, speed int16) error {
 	bufOut := new(bytes.Buffer)
+
+	// byte sequence: 0xff, 0x55, id, action, device, port
 	bufOut.Write([]byte{0xff, 0x55, 0x6, 0x0, 0x2, 0xa, port})
-	err := binary.Write(bufOut, binary.LittleEndian, speed)
-	if err != nil {
-		return err
-	}
-	_, err = p.serialPort.Write(bufOut.Bytes())
+	binary.Write(bufOut, binary.LittleEndian, speed)
+	bufOut.Write([]byte{0xa})
+	_, err := bufOut.WriteTo(p.serialPort)
+	time.Sleep(10 * time.Millisecond)
 	return err
 }
 

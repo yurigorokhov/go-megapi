@@ -16,15 +16,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	time.Sleep(1 * time.Second)
 	defer megaPi.Close()
 	fmt.Println("Running motor on port 1 for 5 seconds")
-	err = megaPi.MotorRun(1, 50)
-	if err != nil {
-		panic(err)
-	}
+	megaPi.MotorRun(1, 0)
+	megaPi.MotorRun(2, -1)
+	time.Sleep(1 * time.Second)
+	megaPi.MotorRun(1, 50)
+	megaPi.MotorRun(2, -50)
 	time.Sleep(5 * time.Second)
-	err = megaPi.MotorRun(1, 0)
-	if err != nil {
-		panic(err)
-	}
+	megaPi.MotorRun(1, 0)
+	megaPi.MotorRun(2, -1)
 }
