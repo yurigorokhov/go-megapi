@@ -34,7 +34,38 @@ func NewMegaPi(device string) (*MegaPi, error) {
 }
 
 // Run a dc motor
-func (p *MegaPi) MotorRun(port byte, speed int16) error {
+func (p *MegaPi) DcMotorRun(port byte, speed int16) error {
+
+	//NOTE: executing this twice because of: https://github.com/Makeblock-official/PythonForMegaPi/issues/1
+	if err := p.dcMotorRun_Helper(port, speed+1); err != nil {
+		return err
+	}
+	if err := p.dcMotorRun_Helper(port, speed); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Stop a dc motor
+func (p *MegaPi) DcMotorStop(port byte) error {
+
+	//NOTE: executing this twice because of: https://github.com/Makeblock-official/PythonForMegaPi/issues/1
+	if err := p.dcMotorRun_Helper(port, -1); err != nil {
+		return err
+	}
+	if err := p.dcMotorRun_Helper(port, 0); err != nil {
+		return err
+	}
+	return nil
+
+}
+
+// Close the connection to the MegaPi
+func (p *MegaPi) Close() error {
+	return p.serialPort.Close()
+}
+
+func (p *MegaPi) dcMotorRun_Helper(port byte, speed int16) error {
 	bufOut := new(bytes.Buffer)
 
 	// byte sequence: 0xff, 0x55, id, action, device, port
@@ -44,11 +75,6 @@ func (p *MegaPi) MotorRun(port byte, speed int16) error {
 	_, err := bufOut.WriteTo(p.serialPort)
 	time.Sleep(10 * time.Millisecond)
 	return err
-}
-
-// Close the connection to the MegaPi
-func (p *MegaPi) Close() error {
-	return p.serialPort.Close()
 }
 
 // Finds a MegaPi device connected over usb
