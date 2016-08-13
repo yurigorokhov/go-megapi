@@ -16,15 +16,23 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	time.Sleep(1 * time.Second)
 	defer megaPi.Close()
-	fmt.Println("Running motor on port 1 for 5 seconds")
+	time.Sleep(1 * time.Second)
+
+	// stop both motors
 	megaPi.MotorRun(1, 0)
 	megaPi.MotorRun(2, -1)
-	time.Sleep(1 * time.Second)
-	megaPi.MotorRun(1, 50)
-	megaPi.MotorRun(2, -50)
-	time.Sleep(5 * time.Second)
+
+	fmt.Println("Running motors on ports 1 and 2")
+	speeds := []int16{30, 50, 100, 200, 300}
+	for _, speed := range speeds {
+		fmt.Printf("Speed: %v\n", speed)
+		megaPi.MotorRun(1, speed)
+		megaPi.MotorRun(2, -speed)
+		time.Sleep(2 * time.Second)
+	}
+
+	// stop both motors
 	megaPi.MotorRun(1, 0)
 	megaPi.MotorRun(2, -1)
 }
