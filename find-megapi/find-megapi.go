@@ -17,19 +17,19 @@ func main() {
 		panic(err)
 	}
 	defer megaPi.Close()
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	// stop both motors
 	megaPi.DcMotorStop(1)
 	megaPi.DcMotorStop(2)
 
 	fmt.Println("Running motors on ports 1 and 2")
-	speeds := []int16{30, 50, 100, 200, 300}
+	speeds := []int16{50, 100, 200, 300}
 	for _, speed := range speeds {
 		fmt.Printf("Speed: %v\n", speed)
 		megaPi.DcMotorRun(1, speed)
 		megaPi.DcMotorRun(2, -speed)
-		time.Sleep(2 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 
 	// stop both motors

@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"github.com/huin/goserial"
+	"github.com/tarm/serial"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -23,8 +23,8 @@ type MegaPi struct {
 
 // Create new MegaPi for sending commands
 func NewMegaPi(device string) (*MegaPi, error) {
-	c := &goserial.Config{Name: device, Baud: Baud}
-	s, err := goserial.OpenPort(c)
+	c := &serial.Config{Name: device, Baud: Baud}
+	s, err := serial.OpenPort(c)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (p *MegaPi) dcMotorRun_Helper(port byte, speed int16) error {
 	binary.Write(bufOut, binary.LittleEndian, speed)
 	bufOut.Write([]byte{0xa})
 	_, err := bufOut.WriteTo(p.serialPort)
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(5 * time.Millisecond)
 	return err
 }
 
